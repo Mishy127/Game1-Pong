@@ -27,6 +27,7 @@ private:
     Vec2 size;
     bool left;
     int score;
+    int target_y;
 };
 
 #endif

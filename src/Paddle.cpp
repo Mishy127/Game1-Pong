@@ -16,24 +16,52 @@ Paddle::Paddle(Game* game, bool l): size{ 10, 150 }, left(l), score(0) {
 Paddle::~Paddle() {}
 
 void Paddle::update(Game* game) {
-    bool go_up, go_down;
+    if (!this->left and game->solo) {
+        int win_w, win_h;
 
-    if (this->left) {
-        go_up = game->isKeyDown(SDLK_w);
-        go_down = game->isKeyDown(SDLK_s);
+        SDL_GetWindowSize(game->getWindow(), &win_w, &win_h);
+
+        auto ball = game->getBall();
+        auto ball_pos = ball->getPos();
+        auto ball_size = ball->getSize();
+        auto ball_speed = ball->getSpeed();
+
+        if (ball_pos.x > win_w / 4 * 3 and ball_speed.x > 0) {
+            if (this->target_y != 0) {
+                if (this->target_y - ball_size.y / 2 > this->pos.y + this->size.y / 2) {
+                    this->pos.y = std::min(this->pos.y + 700 * game->getDeltaTime(), win_h - this->size.y / 2);
+                } else
+                if (this->target_y + ball_size.y / 2 < this->pos.y - this->size.y / 2) {
+                    this->pos.y = std::max(this->pos.y - 700 * game->getDeltaTime(), this->size.y / 2);
+                } else {
+                    this->target_y = 0;
+                }
+            } else {
+                this->target_y = ball_pos.y;
+            }
+        } else {
+            this->target_y = 0;
+        }
     } else {
-        go_up = game->isKeyDown(SDLK_UP);
-        go_down = game->isKeyDown(SDLK_DOWN);
-    }
+        bool go_up, go_down;
 
-    if (go_up and this->pos.y > this->size.y / 2)
-        this->pos.y = std::max(this->pos.y - 1000 * game->getDeltaTime(), this->size.y / 2);
-    else if (go_down) {
-        int win_h;
+        if (this->left) {
+            go_up = game->isKeyDown(SDLK_w);
+            go_down = game->isKeyDown(SDLK_s);
+        } else {
+            go_up = game->isKeyDown(SDLK_UP);
+            go_down = game->isKeyDown(SDLK_DOWN);
+        }
 
-        SDL_GetWindowSize(game->getWindow(), nullptr, &win_h);
+        if (go_up and this->pos.y > this->size.y / 2)
+            this->pos.y = std::max(this->pos.y - 1000 * game->getDeltaTime(), this->size.y / 2);
+        else if (go_down) {
+            int win_h;
 
-        this->pos.y = std::min(this->pos.y + 1000 * game->getDeltaTime(), win_h - this->size.y / 2);
+            SDL_GetWindowSize(game->getWindow(), nullptr, &win_h);
+
+            this->pos.y = std::min(this->pos.y + 1000 * game->getDeltaTime(), win_h - this->size.y / 2);
+        }
     }
 
     auto ball = game->getBall();

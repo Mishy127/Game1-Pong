@@ -9,7 +9,18 @@
 #include "Paddle.h"
 
 class Game {
+    SDL_Window* window;
+    SDL_Renderer* canvas;
+    std::map<int, bool> keys;
+    Mix_Chunk* effects[3];
+
+    float deltatime;
+
+    Ball ball;
+    Paddle paddles[2];
 public:
+    bool solo;
+
     Game();
     ~Game();
     int run();
@@ -42,17 +53,6 @@ public:
 private:
     void update();
     void render();
-
-private:
-    SDL_Window* window;
-    SDL_Renderer* canvas;
-    std::map<int, bool> keys;
-    Mix_Chunk* effects[3];
-
-    float deltatime;
-
-    Ball ball;
-    Paddle paddles[2];
 };
 
 #endif

@@ -16,6 +16,8 @@ Game::Game() {
     this->effects[0] = Mix_LoadWAV("assets/hit-wall.wav");
     this->effects[1] = Mix_LoadWAV("assets/hit-paddle.wav");
     this->effects[2] = Mix_LoadWAV("assets/score.wav");
+
+    this->solo = true;
 }
 
 Game::~Game() {
@@ -201,6 +203,13 @@ void Game::render() {
 
     renderScore(this->paddles[0].getScore(), true, this->window, this->canvas);
     renderScore(this->paddles[1].getScore(), false, this->window, this->canvas);
+
+    int win_w, win_h;
+
+    SDL_GetWindowSize(this->window, &win_w, &win_h);
+
+    SDL_SetRenderDrawColor(canvas, 0x88, 0x88, 0x88, 0x88);
+    SDL_RenderDrawLine(this->canvas, win_w / 2, 0, win_w / 2, win_h);
 
     this->ball.render(this);
     this->paddles[0].render(this);
